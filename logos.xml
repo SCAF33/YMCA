@@ -1,77 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Module>
-<ModulePrefs title="Steegle.com - Google Sites Tweet Button" width="130" height="85" scrolling="false" title_url="http://www.steegle.com/websites/google-sites-howtos/twitter-tweet-button-gadget" description="Twitter Tweet button for Google Sites - follow the instructions on my site Steegle.com" author="Stephen Hind" author_email="stephen@steegle.com" author_affiliation="Steegle.com" author_location="Carlisle, Cumbria, UK" screenshot="http://www.steegle.com/images/twitter-logo-120x60.png" author_link="http://www.steegle.com/" thumbnail="http://www.steegle.com/images/twitter-logo-120x60.png" directory_title="Steegle.com - Twitter Tweet Button"></ModulePrefs>
-<UserPref name="url" display_name="URL to share (leave blank for automatic):" datatype="string" default_value=""/>
-<UserPref name="via" display_name="Twitter user to attribute:" datatype="string" default_value=""/>
-<UserPref name="text" display_name="Default tweet text:" datatype="string" default_value=""/>
-<UserPref name="related" display_name="Related Twitter users:" datatype="string" default_value=""/>
-<UserPref name="count" display_name="Count box position:" datatype="enum" default_value="horizontal">
-<EnumValue value="none" display_value="None [60x25]"/>
-<EnumValue value="horizontal" display_value="Horizontal (default) [100x25]"/>
-<EnumValue value="vertical" display_value="Vertical [60x65]"/>
-</UserPref>
-<UserPref name="size" display_name="Size:" datatype="enum" default_value="medium">
-<EnumValue value="medium" display_value="Medium (default)"/>
-<EnumValue value="large" display_value="Large"/>
-</UserPref>
-<UserPref name="lang" display_name="Language:" datatype="enum" default_value="en">
-<EnumValue value="en" selected="selected" display_value="English"/>
-<EnumValue value="fr" display_value="French"/>
-<EnumValue value="de" display_value="German"/>
-<EnumValue value="it" display_value="Italian"/>
-<EnumValue value="ja" display_value="Japanese"/>
-<EnumValue value="ko" display_value="Korean"/>
-<EnumValue value="es" display_value="Spanish"/>
-</UserPref>
-<UserPref name="counturl" display_name="URL to which your shared URL resolves to (leave blank for automatic):" datatype="string" default_value=""/>
-<Content type="html">
-<![CDATA[
-<html><head><title>Steegle.com - Twitter Tweet Button</title></head><body style="background-color:transparent;">
-<div id="google_sites_twitter_tweet_button" style="background-color:transparent;">
-  <img src="http://www.google.com/ig/images/spinner.gif">
-</div> 
-<script type="text/javascript"> 
-  function stripat(twittername){ 
-    if (twittername.charAt(0)=='@'){ 
-      twittername = twittername.slice(1); return twittername; 
-    }else{ 
-      return twittername; 
-    } 
-  } 
-  // Get userprefs 
-  var prefs = new gadgets.Prefs(); 
-  var screenname = prefs.getString("screenname"); 
-  var url = document.referrer;
-  var via = prefs.getString("via"); 
-  var text = prefs.getString("text"); 
-  var related = prefs.getString("related"); 
-  var count = prefs.getString("count"); 
-  var size = prefs.getString("size"); 
-  var lang = prefs.getString("lang"); 
-  var counturl = prefs.getString("counturl"); 
-  if(count=="none"){var width = "60"; var height = "25";}
-  else if(count=="horizontal"){var width = "100"; var height = "25";}
-  else{var width = "60"; var height = "65";}
-  if(prefs.getString("url")){var url = prefs.getString("url")}else{var url = document.referrer;}
-  if(prefs.getString("counturl")){var url = prefs.getString("counturl")}else{var url = document.referrer;}
-  var iframeURL = '//platform.twitter.com/widgets/tweet_button.html?url='+encodeURIComponent(url)+'&via='+stripat(via)+'&text='+encodeURIComponent(text)+'&related='+stripat(related)+'&lang='+lang+'&count='+count+'&size='+size+'&counturl='+encodeURIComponent(counturl); 
-  if(gadgets.window){ 
-    var viewport = gadgets.window.getViewportDimensions(); 
-    if(viewport.width){ var width = viewport.width; } 
-    if(viewport.height){ var height = viewport.height; } 
-  } 
-  var iframe = document.createElement('iframe'); 
-  iframe.setAttribute('width',width+'px'); 
-  iframe.setAttribute('height',height+'px'); // TODO: add options to control frameborder 
-  iframe.setAttribute('frameBorder','no'); 
-  iframe.setAttribute('src',iframeURL); 
-  iframe.setAttribute('allowtransparency','true'); 
-  iframe.setAttribute('scrolling','no'); 
-  // set the follow button to the placeholder div 
-  var dest = document.getElementById('google_sites_twitter_tweet_button'); 
-  dest.innerHTML = ''; 
-  dest.appendChild(iframe); 
-</script>
-</body></html>
-]]>
-</Content>
+  <ModulePrefs title="Follow me on Twitter"
+    title_url="https://www.twitter.com"
+    width="250"
+    height="400">
+    <Require feature="setprefs"/>
+    <Require feature="dynamic-height"/>
+    <Require feature="views"/>
+  </ModulePrefs>
+  <UserPref name="type" display_name="Display" datatype="enum" default_value="profile" required="true">
+    <EnumValue value="search" display_value="Search"/>
+    <EnumValue value="user" display_value="User"/>
+  </UserPref>
+  <UserPref name="query" display_name="query" required="true"/>
+  <UserPref name="title" display_name="title" required="false"/>
+  <UserPref name="caption" display_name="caption" required="false"/>
+  <UserPref name="numtweets" display_name="# of tweets" datatype="number"/>
+  <Content type="html" view="configuration" preferred_height="auto">
+    <![CDATA[
+    <style type="text/css">
+      .config-options {
+        margin: 10px;
+      }
+      .label {
+        font-weight: bold;
+      }
+      .gray {
+        color: #FFFFFF;
+      }
+      .invalid-field {
+        background-color: #4ED3FF;
+      }
+      html {
+        font-family:arial,sans-serif;
+        font-size:0.81em;
+        font-size-adjust:none;
+        font-style:normal;
+        font-variant:normal;
+        font-weight:normal;
+        line-height:1.5;
+      }
+      A:link, A:visited, A:active { text-decoration: none }
+    </style>
+    <table class="config-options">
+      <tr>
+        <td align="left" class="label">Display:</td>
+        <td align="left">
+          <select id="type" onchange="Update()">
+            <option value="profile">User Profile</option>
+            <option value="search">Search</option>
+          </select>
+          </td>
+        </tr>
+        <tr id="user_detail">
+          <td align="left" class="label">Username:</td>
+          <td align="left">
+            <input type="text" id="userid" onkeyup="Update()"/>
+          </td>
+        </tr>
+        <tr id="tweet_detail">
+          <td align="left" class="label"># of tweets:</td>
+          <td align="left">
+            <input type="number" name="quantity" min="1" max="50" value="5" id="numtweets" onchange="Update()"/>
+          </td>
+        </tr>
+        <tr id="query_detail">
+          <td align="left" class="label">Search query:</td>
+          <td align="left">
+            <input type="text" id="query" onkeyup="Update()"/>
+          </td>
+        </tr>
+        <tr id="title_detail">
+          <td align="left" class="label">Title:</td>
+          <td align="left">
+            <input type="text" id="title" onkeyup="Update()"/>
+          </td>
+        </tr>
+        <tr id="caption_detail">
+          <td align="left" class="label">Caption:</td>
+          <td align="left">
+            <input type="text" id="caption" onkeyup="Update()"/>
+          </td>
+        </tr>
+      </table>
+    <script type="text/javascript">
+      var prefs = new gadgets.Prefs();
+
+      function Initialize() {
+        var query = prefs.getString('query') || '';
+        switch (prefs.getString('type')) {
+          default:
+          case 'profile':
+            document.getElementById('user_detail').style.display = '';
+            document.getElementById('userid').value = query;
+            document.getElementById('tweet_detail').style.display = '';
+            document.getElementById('numtweets').value = prefs.getString('numtweets') || 5;
+            document.getElementById('query_detail').style.display = 'none';
+            document.getElementById('title_detail').style.display = 'none';
+            document.getElementById('caption_detail').style.display = 'none';
+            document.getElementById('type').value = 'profile';
+            break;
+
+          case 'search':
+            document.getElementById('user_detail').style.display = 'none';
+            document.getElementById('tweet_detail').style.display = 'none';
+            document.getElementById('query_detail').style.display = '';
+            document.getElementById('title_detail').style.display = '';
+            document.getElementById('caption_detail').style.display = '';
+            document.getElementById('query').value = query;
+            document.getElementById('title').value = prefs.getString('title') || '';
+            document.getElementById('caption').value = prefs.getString('caption') || '';
+            document.getElementById('type').value = 'search';
+            break;
+        }
+        gadgets.window.adjustHeight();
+      };
+
+      function Update() {
+        var type = document.getElementById('type').value;
+
+        switch (type) {
+          default:
+          case 'profile':
+            document.getElementById('user_detail').style.display = '';
+            document.getElementById('tweet_detail').style.display = '';
+            document.getElementById('query_detail').style.display = 'none';
+            document.getElementById('title_detail').style.display = 'none';
+            document.getElementById('caption_detail').style.display = 'none';
+            prefs.set('query', document.getElementById('userid').value);
+            prefs.set('numtweets', document.getElementById('numtweets').value);
+            prefs.set('type', 'profile');
+            break;
+
+          case 'search':
+            document.getElementById('user_detail').style.display = 'none';
+            document.getElementById('tweet_detail').style.display = 'none';
+            document.getElementById('query_detail').style.display = '';
+            document.getElementById('title_detail').style.display = '';
+            document.getElementById('caption_detail').style.display = '';
+            prefs.set('title', document.getElementById('title').value);
+            prefs.set('query', document.getElementById('query').value);
+            prefs.set('caption', document.getElementById('caption').value);
+            prefs.set('type', 'search');
+            break;
+        }
+        gadgets.window.adjustHeight();
+      };
+
+      gadgets.util.registerOnLoadHandler(Initialize);
+    </script>
+    ]]>
+  </Content>
+  <Content type="html" view="home, canvas">
+    <![CDATA[
+    <script src="https://gist.github.com/dideler/2153825/raw/2afe432c0c13e4fc1ddea04efd5940d23ec4c371/widget.js"></script>
+    <script>
+    function Initialize() {
+      var dimensions = gadgets.window.getViewportDimensions();
+      var prefs = new gadgets.Prefs();
+      var settings = {
+        version: 2,
+        id: 'widget',
+        interval: 6000,
+        width: dimensions['width'],
+        height: dimensions['height'],
+        theme: {
+          shell: {
+            background: '#4ED3FF',
+            color: '#ffffff'
+          },
+          tweets: {
+            background: '#ffffff',
+            color: '#000000',
+            links: '#0762eb'
+          }
+        },
+        features: {
+          scrollbar: true,
+          loop: false,
+          live: true,
+          hashtags: true,
+          timestamp: true,
+          fullscreen: gadgets.views.getCurrentView().getName() == 'canvas',
+          behavior: 'all'
+        }
+      };
+
+      var query = prefs.getString('query');
+      var tweets = prefs.getString('numtweets');
+
+      switch (prefs.getString('type')) {
+        default:
+        case 'profile':
+          settings['type'] = 'profile';
+          settings['rpp'] = tweets;
+          new TWTR.Widget(settings).render().setUser(query).start();
+          break;
+
+        case 'search':
+          settings['type'] = 'search';
+          settings['search'] = query;
+          settings['title'] = prefs.getString('title') || query;
+          settings['subject'] = prefs.getString('caption') || '';
+          new TWTR.Widget(settings).render().start();
+          break;
+      }
+    };
+    gadgets.util.registerOnLoadHandler(Initialize);
+    </script>
+    <div id="widget" style="width:100%;height:100%">
+    </div>
+    ]]>
+  </Content>
 </Module>
