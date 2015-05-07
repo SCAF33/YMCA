@@ -1,14 +1,77 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-  <ModulePrefs title="Go to Photo Album" height="250" scaling="false" />
-  <Content type="html">
-  <![CDATA[
-    <div style="text-align:center"><a
-      id="Riggs" title="My Photo Album" target="_blank"
-      href="http://picasaweb.google.com/doc.examples/ShelfBoy">
-      <img border="0" alt="Photo" src="http://doc.examples.googlepages.com/Riggsie-OP.jpg" 
-      title="Click Here."></a>
-    </div>
-  ]]>
-  </Content>
+<ModulePrefs title="Steegle.com - Google Sites Tweet Button" width="130" height="85" scrolling="false" title_url="http://www.steegle.com/websites/google-sites-howtos/twitter-tweet-button-gadget" description="Twitter Tweet button for Google Sites - follow the instructions on my site Steegle.com" author="Stephen Hind" author_email="stephen@steegle.com" author_affiliation="Steegle.com" author_location="Carlisle, Cumbria, UK" screenshot="http://www.steegle.com/images/twitter-logo-120x60.png" author_link="http://www.steegle.com/" thumbnail="http://www.steegle.com/images/twitter-logo-120x60.png" directory_title="Steegle.com - Twitter Tweet Button"></ModulePrefs>
+<UserPref name="url" display_name="URL to share (leave blank for automatic):" datatype="string" default_value=""/>
+<UserPref name="via" display_name="Twitter user to attribute:" datatype="string" default_value=""/>
+<UserPref name="text" display_name="Default tweet text:" datatype="string" default_value=""/>
+<UserPref name="related" display_name="Related Twitter users:" datatype="string" default_value=""/>
+<UserPref name="count" display_name="Count box position:" datatype="enum" default_value="horizontal">
+<EnumValue value="none" display_value="None [60x25]"/>
+<EnumValue value="horizontal" display_value="Horizontal (default) [100x25]"/>
+<EnumValue value="vertical" display_value="Vertical [60x65]"/>
+</UserPref>
+<UserPref name="size" display_name="Size:" datatype="enum" default_value="medium">
+<EnumValue value="medium" display_value="Medium (default)"/>
+<EnumValue value="large" display_value="Large"/>
+</UserPref>
+<UserPref name="lang" display_name="Language:" datatype="enum" default_value="en">
+<EnumValue value="en" selected="selected" display_value="English"/>
+<EnumValue value="fr" display_value="French"/>
+<EnumValue value="de" display_value="German"/>
+<EnumValue value="it" display_value="Italian"/>
+<EnumValue value="ja" display_value="Japanese"/>
+<EnumValue value="ko" display_value="Korean"/>
+<EnumValue value="es" display_value="Spanish"/>
+</UserPref>
+<UserPref name="counturl" display_name="URL to which your shared URL resolves to (leave blank for automatic):" datatype="string" default_value=""/>
+<Content type="html">
+<![CDATA[
+<html><head><title>Steegle.com - Twitter Tweet Button</title></head><body style="background-color:transparent;">
+<div id="google_sites_twitter_tweet_button" style="background-color:transparent;">
+  <img src="http://www.google.com/ig/images/spinner.gif">
+</div> 
+<script type="text/javascript"> 
+  function stripat(twittername){ 
+    if (twittername.charAt(0)=='@'){ 
+      twittername = twittername.slice(1); return twittername; 
+    }else{ 
+      return twittername; 
+    } 
+  } 
+  // Get userprefs 
+  var prefs = new gadgets.Prefs(); 
+  var screenname = prefs.getString("screenname"); 
+  var url = document.referrer;
+  var via = prefs.getString("via"); 
+  var text = prefs.getString("text"); 
+  var related = prefs.getString("related"); 
+  var count = prefs.getString("count"); 
+  var size = prefs.getString("size"); 
+  var lang = prefs.getString("lang"); 
+  var counturl = prefs.getString("counturl"); 
+  if(count=="none"){var width = "60"; var height = "25";}
+  else if(count=="horizontal"){var width = "100"; var height = "25";}
+  else{var width = "60"; var height = "65";}
+  if(prefs.getString("url")){var url = prefs.getString("url")}else{var url = document.referrer;}
+  if(prefs.getString("counturl")){var url = prefs.getString("counturl")}else{var url = document.referrer;}
+  var iframeURL = '//platform.twitter.com/widgets/tweet_button.html?url='+encodeURIComponent(url)+'&via='+stripat(via)+'&text='+encodeURIComponent(text)+'&related='+stripat(related)+'&lang='+lang+'&count='+count+'&size='+size+'&counturl='+encodeURIComponent(counturl); 
+  if(gadgets.window){ 
+    var viewport = gadgets.window.getViewportDimensions(); 
+    if(viewport.width){ var width = viewport.width; } 
+    if(viewport.height){ var height = viewport.height; } 
+  } 
+  var iframe = document.createElement('iframe'); 
+  iframe.setAttribute('width',width+'px'); 
+  iframe.setAttribute('height',height+'px'); // TODO: add options to control frameborder 
+  iframe.setAttribute('frameBorder','no'); 
+  iframe.setAttribute('src',iframeURL); 
+  iframe.setAttribute('allowtransparency','true'); 
+  iframe.setAttribute('scrolling','no'); 
+  // set the follow button to the placeholder div 
+  var dest = document.getElementById('google_sites_twitter_tweet_button'); 
+  dest.innerHTML = ''; 
+  dest.appendChild(iframe); 
+</script>
+</body></html>
+]]>
+</Content>
 </Module>
